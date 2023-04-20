@@ -5,4 +5,5 @@ export interface CarouselItemProps {
   title?: string;
   image?: string;
   video?: string;
+  currentItem?:boolean;
 }

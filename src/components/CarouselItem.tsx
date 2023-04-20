@@ -1,6 +1,15 @@
+import { useEffect, useRef } from "react";
 import { CarouselItemProps } from "src/types";
 
 function CarouselItem(props: CarouselItemProps) {
+    const ref = useRef<HTMLVideoElement>(null)
+    useEffect(() => {
+      if(props.currentItem && ref.current){
+        ref.current.play()
+      } else {
+        ref.current?.pause()
+      }
+    },[props.currentItem])
   return (
     <div
       style={{ top: props.top ?? 0 }}
@@ -11,7 +20,7 @@ function CarouselItem(props: CarouselItemProps) {
         className="content relative bg-yellow-100 rounded-3xl h-full w-full flex justify-center bg-cover bg-center overflow-hidden"
       >
         {props.video && <video
-          autoPlay
+          ref={ref}
           className="video-stream html5-main-video h-full w-full object-cover"
           data-no-fullscreen="true"
           src="/assets/mov_bbb.mp4"

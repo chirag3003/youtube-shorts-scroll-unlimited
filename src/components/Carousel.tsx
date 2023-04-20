@@ -37,9 +37,7 @@ function Carousel() {
     }, 550);
   };
 
-  const onMouseDown: MouseEventHandler = (evt) => {
-    console.log(evt);
-
+  const onMouseDown: MouseEventHandler = (evt) =>{ 
     setDragY(evt.clientY);
   };
 
@@ -131,6 +129,7 @@ function Carousel() {
               key={item.id}
               {...item}
               top={(index - itemNo) * (height as number)}
+              currentItem={(index === itemNo)}
             />
           );
         })}
