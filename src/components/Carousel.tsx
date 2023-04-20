@@ -2,6 +2,7 @@ import {
   MouseEventHandler,
   WheelEventHandler,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import { CarouselItemProps } from "src/types";
@@ -9,7 +10,7 @@ import CarouselItem from "./CarouselItem";
 
 // example list
 const _list: CarouselItemProps[] = [
-  { id: 1, title: "1", image: "/assets/image.jpg" },
+  { id: 1, title: "example number 1", image: "/assets/image.jpg",text:"example" },
   { id: 2, title: "2", image: "/assets/image.jpg" },
   { id: 3, title: "3", image: "/assets/image.jpg" },
   { id: 4, title: "4", image: "/assets/image.jpg" },
@@ -22,12 +23,12 @@ const _list: CarouselItemProps[] = [
 ];
 
 function Carousel() {
-  // const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
   const [list, setList] = useState(_list); //to store the list of items
   const [itemNo, setItemNo] = useState(0); //to store the current item of the list
   const [canScroll, setCanScroll] = useState(true); //used to stop fast scrolling
   const [dragY, setDragY] = useState<null | number>(null); //stores mouse click coordinates to check for swipe
-  const [height,setHeight] = useState(0); //stores
+  const [height, setHeight] = useState(0); //stores
 
   //to allow scroll after a short duration
   const setScrollTimeout = async () => {
@@ -37,18 +38,20 @@ function Carousel() {
   };
 
   const onMouseDown: MouseEventHandler = (evt) => {
+    console.log(evt);
+
     setDragY(evt.clientY);
   };
 
   const onMouseUp: MouseEventHandler = (evt) => {
     if (!dragY) return;
     if (evt.clientY < dragY) {
-      nextItem()
+      nextItem();
     }
     if (evt.clientY > dragY) {
-     previousItem();
+      previousItem();
     }
-    
+    setDragY(null)
   };
 
   //handles scroll
@@ -58,7 +61,7 @@ function Carousel() {
     if (evt.deltaY > 0) {
       nextItem();
     } else if (evt.deltaY < 0) {
-      previousItem()
+      previousItem();
     }
     setCanScroll(false);
     setScrollTimeout();
@@ -77,8 +80,8 @@ function Carousel() {
   };
 
   const previousItem = () => {
-      if (itemNo === 0) return;
-      setItemNo((old) => old - 1);
+    if (itemNo === 0) return;
+    setItemNo((old) => old - 1);
   };
 
   const removeOldItem = (list: any[]) => {
@@ -93,28 +96,44 @@ function Carousel() {
   };
 
   useEffect(() => {
-    setHeight(window.innerHeight)
-    window.addEventListener("resize",() => {
-      setHeight(window.innerHeight)      
-    })
+    setHeight(ref.current?.clientHeight as number);
+    window.addEventListener("resize", () => {
+      setHeight(ref.current?.clientHeight as number);
+    });
   }, []);
 
   return (
     <div
+      ref={ref}
+      onTouchStart={(evt) => {
+        setDragY(evt.touches[0].clientY);
+      }}
+      onTouchMove={(evt) => {
+        evt.preventDefault();
+       if (!dragY) return;
+       if (evt.touches[0].clientY < dragY) {
+         nextItem();
+       }
+       if (evt.touches[0].clientY > dragY) {
+         previousItem();
+       } 
+       setDragY(null)
+      }}
       onWheel={onWheel}
       onMouseDown={onMouseDown}
       onMouseUp={onMouseUp}
       className={`w-full h-full overflow-hidden relative  `}
     >
-      {list.map((item, index) => {
-        return (
-          <CarouselItem
-            key={item.id}
-            {...item}
-            top={(index - itemNo) * (height as number)}
-          />
-        );
-      })}
+      {ref.current &&
+        list.map((item, index) => {
+          return (
+            <CarouselItem
+              key={item.id}
+              {...item}
+              top={(index - itemNo) * (height as number)}
+            />
+          );
+        })}
     </div>
   );
 }
