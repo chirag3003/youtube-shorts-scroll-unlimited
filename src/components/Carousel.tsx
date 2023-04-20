@@ -77,15 +77,19 @@ function Carousel() {
     setItemNo((old) => old + 1);
   };
 
+  //moves the carousel to the previous item
   const previousItem = () => {
     if (itemNo === 0) return;
     setItemNo((old) => old - 1);
   };
 
+
+  //removes old items to save memory
   const removeOldItem = (list: any[]) => {
     return [...list.splice(1)];
   };
 
+  //adds new items on reaching near the end
   const addNewItem = (list: any[]) => {
     return [
       ...list,

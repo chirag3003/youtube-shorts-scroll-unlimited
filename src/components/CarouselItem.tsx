@@ -4,6 +4,7 @@ import { CarouselItemProps } from "src/types";
 function CarouselItem(props: CarouselItemProps) {
     const ref = useRef<HTMLVideoElement>(null)
     useEffect(() => {
+      //plays or pauses the video if the video is displayed on the screen
       if(props.currentItem && ref.current){
         ref.current.play()
       } else {
