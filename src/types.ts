@@ -4,4 +4,5 @@ export interface CarouselItemProps {
   text?: string;
   title?: string;
   image?: string;
+  video?: string;
 }
