@@ -37,16 +37,16 @@ function Carousel() {
     }, 550);
   };
 
-  const onMouseDown: MouseEventHandler = (evt) =>{ 
-    setDragY(evt.clientY);
+  const onMouseDown = (y:number) => {
+    setDragY(y);
   };
 
-  const onMouseUp: MouseEventHandler = (evt) => {
+  const onMouseUp= (y:number) => {
     if (!dragY) return;
-    if (evt.clientY < dragY) {
+    if (y < dragY) {
       nextItem();
     }
-    if (evt.clientY > dragY) {
+    if (y > dragY) {
       previousItem();
     }
     setDragY(null)
@@ -104,22 +104,15 @@ function Carousel() {
     <div
       ref={ref}
       onTouchStart={(evt) => {
-        setDragY(evt.touches[0].clientY);
+        onMouseDown(evt.touches[0].clientY);
       }}
       onTouchMove={(evt) => {
         evt.preventDefault();
-       if (!dragY) return;
-       if (evt.touches[0].clientY < dragY) {
-         nextItem();
-       }
-       if (evt.touches[0].clientY > dragY) {
-         previousItem();
-       } 
-       setDragY(null)
+        onMouseUp(evt.touches[0].clientY)
       }}
       onWheel={onWheel}
-      onMouseDown={onMouseDown}
-      onMouseUp={onMouseUp}
+      onMouseDown={e => onMouseDown(e.clientY)}
+      onMouseUp={e => onMouseUp(e.clientY)}
       className={`w-full h-full overflow-hidden relative  `}
     >
       {ref.current &&
