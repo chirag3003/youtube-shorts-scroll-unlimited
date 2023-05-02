@@ -16,6 +16,12 @@ const _list: CarouselItemProps[] = [
     text: "description",
     video: "/assets/mov_bbb.mp4",
   },
+  {
+    id: 9,
+    title: "video example",
+    text: "description",
+    video: "/assets/mov_bbb.mp4",
+  },
   { id: 2, title: "2", image: "/assets/image.jpg" },
   { id: 3, title: "3", image: "/assets/image.jpg" },
   { id: 4, title: "4", image: "/assets/image.jpg" },

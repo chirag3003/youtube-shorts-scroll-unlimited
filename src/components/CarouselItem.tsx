@@ -3,75 +3,85 @@ import ReactInstaStories from "react-insta-stories";
 import { CarouselItemProps } from "src/types";
 
 function CarouselItem(props: CarouselItemProps) {
+  const [isMouseDown, setIsMouseDown] = useState(false);
+
+  function Story({
+    item: props,
+    isPaused,
+  }: {
+    item: CarouselItemProps;
+    isPaused: boolean;
+  }) {
+    const ref = useRef<HTMLVideoElement>(null);
+    const [isPlaying, setIsPlaying] = useState(false); //to check if video is playing or not
+
+    useEffect(() => {
+      if (props.currentItem && ref.current && !isMouseDown) {
+        ref.current.play();
+        setIsPlaying(true);
+      } else {
+        ref.current?.pause();
+        setIsPlaying(false);
+      }
+    }, [props.currentItem, isMouseDown]);
+    return (
+      <div
+        style={props.image ? { backgroundImage: `url(${props.image})` } : {}}
+        className="content relative  rounded-3xl h-full w-full flex justify-center bg-cover bg-center overflow-hidden"
+      >
+        {props.video && (
+          <video
+            ref={ref}
+            className="video-stream html5-main-video h-full w-full object-cover"
+            data-no-fullscreen="true"
+            src="/assets/mov_bbb.mp4"
+          ></video>
+        )}
+        <div className="title absolute bottom-10 left-5">
+          <p className="text-3xl text-white ">{props.title}</p>
+          <p className="description text-gray-50 text-xl">{props.text}</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
       style={{ top: props.top ?? 0 }}
-      className="h-full w-full py-5 absolute transition-all duration-500"
+      className="py-5 absolute transition-all duration-500 overflow-hidden"
+      onMouseDown={() => setIsMouseDown(true)}
+      onMouseUp={() => setIsMouseDown(false)}
     >
-      {/* <ReactInstaStories
+      <ReactInstaStories
+        defaultInterval={8000}
         stories={[
           {
-            content: (
-              
-            ),
+            // content: ({ isPaused }) => {
+            //   return (
+            //     <>
+            //       <Story item={props} isPaused={isPaused} />
+            //     </>
+            //   );
+            // },
+            url: "/assets/image.jpg",
+            type: "image",
+          },
+          {
+            // content: ({ isPaused }) => {
+            //   return (
+            //     <>
+            //       <Story item={props} isPaused={isPaused} />
+            //     </>
+            //   );
+            // },
+            url: "/assets/mov_bbb.mp4",
+            type: "video",
           },
         ]}
-        defaultInterval={1500}
-        // width={432}
-        // height={768}
         width={"100%"}
-        // ={{margin:"auto"}}
-      /> */}
-      <Story {...props} />
+      />
     </div>
   );
 }
 
 export default CarouselItem;
-
-function Story(props: CarouselItemProps) {
-  const ref = useRef<HTMLVideoElement>(null);
-  const [isPlaying, setIsPlaying] = useState(false); //to check if video is playing or not
-
-  //to toggle video on Click
-  const togglePlay = () => {
-    if (isPlaying) {
-      setIsPlaying(false);
-      ref.current?.pause();
-    } else {
-      setIsPlaying(true);
-      ref.current?.play();
-    }
-  };
-  useEffect(() => {
-    //plays or pauses the video if the video is displayed on the screen
-    if (props.currentItem && ref.current) {
-      ref.current.play();
-      setIsPlaying(true);
-    } else {
-      ref.current?.pause();
-      setIsPlaying(false);
-    }
-  }, [props.currentItem]);
-  return (
-    <div
-      style={props.image ? { backgroundImage: `url(${props.image})` } : {}}
-      className="content relative bg-yellow-100 rounded-3xl h-full w-full flex justify-center bg-cover bg-center overflow-hidden"
-    >
-      {props.video && (
-        <video
-          ref={ref}
-          className="video-stream html5-main-video h-full w-full object-cover"
-          data-no-fullscreen="true"
-          src="/assets/mov_bbb.mp4"
-          onClick={togglePlay}
-          loop={true}
-        ></video>
-      )}
-      <div className="title absolute bottom-10 left-5">
-        <p className="text-3xl text-white ">{props.title}</p>
-        <p className="description text-gray-50 text-xl">{props.text}</p>
-      </div>
-    </div>
-  );
-}
